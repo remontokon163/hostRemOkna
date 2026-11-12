@@ -8,7 +8,31 @@
     <meta name="keywords" content="ремонт фурнитуры, установка фурнитуры, замена ручки, установка ручки, замена уплотнителя на окне, поменять уплотнитель, изготовление стеклопакета, замена стеклопакета, установка стеклопакета, замена стекла, установка стекла, монтаж подоконника, установка подоконника, установка откосов ПВХ, монтаж откосов ПВХ, установка окон, монтаж монтаж балкона, установка замка на дверь, установка детского замка, монтаж детского замка, ручка с ключом, замена личинки , установка порога, замена порога, замена верхней петли, замена нижней петли, установка верхней петли, установка нижней петли, герметизация окон, промазка стизом, установка отливов, изготовление отливов, пропенивание швов, наружние откосы, металлические откосы, сетки антикошка, установка сеток, антимошка, антипыль, сетка на дверь, сетка на петлях, сетка на дверь, сетка на петлях, раздвижная противомоскитная сетка, установка защёлки двери, фурнитура мако, фурнитура рото, фурнитура резе, фурнитура винхаус, доводчик двери, установка доводчика, регулировка доводчика"/>
     <link rel="icon" href="/favicon.png"/>
     <title>РЕМ-ОКНА</title>
-    
+
+    <!-- Стили для корректного отображения двух телефонов на мобильных -->
+    <style>
+        .phones-wrap {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+        @media (max-width: 992px) {
+            .phones-wrap {
+                flex-direction: column;
+                gap: 2px;
+                white-space: normal;
+                line-height: 1.3;
+            }
+            .phones-wrap .phones-separator {
+                display: none;
+            }
+            .phones-wrap a {
+                text-align: center;
+            }
+        }
+    </style>
+
     <script>
         (function (m, e, t, r, i, k, a) {
             m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments); };
@@ -27,7 +51,7 @@
         });
     </script>
     <noscript><div><img src="https://mc.yandex.ru/watch/96778353" style="position: absolute; left: -9999px" alt=""/></div></noscript>
-    
+
     <script defer="defer" src="/js/chunk-vendors.4f06a234.js"></script>
     <script defer="defer" src="/js/app.7d7a7e1c.js"></script>
     <link href="/css/app.857208ca.css" rel="stylesheet">
@@ -40,41 +64,58 @@
     <!-- ========================================== -->
     <script>
     (function () {
+        var FIRST_TAIL = '9371008097';   // конец первого номера
         var SECOND_HREF = 'tel:+79674828298';
         var SECOND_TEXT  = '+7 (967) 482-82-98';
         var MARK = 'data-second-phone';
 
+        // Оборачивает номер и добавляет рядом второй
+        function addSecond(firstLink) {
+            if (firstLink.getAttribute(MARK)) return;
+            firstLink.setAttribute(MARK, '1');
+
+            var wrap = document.createElement('span');
+            wrap.className = 'phones-wrap';
+
+            var sep = document.createElement('span');
+            sep.className = 'phones-separator';
+            sep.textContent = '·';
+
+            var second = document.createElement('a');
+            second.href = SECOND_HREF;
+            second.textContent = SECOND_TEXT;
+            // наследуем внешний вид первого номера
+            second.setAttribute('style', 'color:inherit;font-weight:inherit;text-decoration:inherit;font-size:inherit;');
+
+            // вставляем обёртку на место первого номера и переносим его внутрь
+            firstLink.parentNode.insertBefore(wrap, firstLink);
+            wrap.appendChild(firstLink);
+            wrap.appendChild(sep);
+            wrap.appendChild(second);
+        }
+
         function decorate() {
-            // 1) Все ссылки с первым номером — добавляем второй рядом
-            var links = document.querySelectorAll('a[href*="9371008097"]');
+            // 1) Номера, оформленные ссылками tel:
+            var links = document.querySelectorAll('a[href*="' + FIRST_TAIL + '"]');
             for (var i = 0; i < links.length; i++) {
-                var a = links[i];
-                if (a.getAttribute(MARK)) continue;
-                a.setAttribute(MARK, '1');
-
-                var sep = document.createTextNode(' · ');
-                var b = document.createElement('a');
-                b.href = SECOND_HREF;
-                b.textContent = SECOND_TEXT;
-                b.setAttribute('style',
-                    'color:inherit;font-weight:inherit;text-decoration:inherit;');
-
-                a.parentNode.insertBefore(sep, a.nextSibling);
-                a.parentNode.insertBefore(b, sep.nextSibling);
+                addSecond(links[i]);
             }
 
-            // 2) Если номер встречается просто текстом (без ссылки) — тоже добавим
-            var all = document.querySelectorAll('body *');
-            for (var j = 0; j < all.length; j++) {
-                var el = all[j];
-                if (el.getAttribute && el.getAttribute(MARK)) continue;
-                if (el.children && el.children.length > 0) continue; // только "листовые" элементы
-                if (!el.textContent || el.textContent.indexOf('100-80-97') === -1) continue;
-                el.setAttribute(MARK, '1');
-                el.innerHTML = el.innerHTML.replace(
-                    /(100-80-97)/,
-                    '$1 · <a href="' + SECOND_HREF + '" style="color:inherit;font-weight:inherit;">' + SECOND_TEXT + '</a>'
-                );
+            // 2) Номера, написанные просто текстом (без ссылки)
+            var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+            var node;
+            while ((node = walker.nextNode())) {
+                if (node.nodeValue && node.nodeValue.indexOf('100-80-97') !== -1) {
+                    var parent = node.parentNode;
+                    if (parent && !parent.getAttribute(MARK)) {
+                        parent.setAttribute(MARK, '1');
+                        parent.innerHTML = parent.innerHTML.replace(
+                            /(100-80-97)/,
+                            '<span class="phones-wrap">$1<span class="phones-separator"> · </span>' +
+                            '<a href="' + SECOND_HREF + '" style="color:inherit;font-weight:inherit;font-size:inherit;">' + SECOND_TEXT + '</a></span>'
+                        );
+                    }
+                }
             }
         }
 
