@@ -36,6 +36,60 @@
     <div id="app"></div>
 
     <!-- ========================================== -->
+    <!-- СКРИПТ: ВТОРОЙ ТЕЛЕФОН РЯДОМ С ПЕРВЫМ -->
+    <!-- ========================================== -->
+    <script>
+    (function () {
+        var SECOND_HREF = 'tel:+79674828298';
+        var SECOND_TEXT  = '+7 (967) 482-82-98';
+        var MARK = 'data-second-phone';
+
+        function decorate() {
+            // 1) Все ссылки с первым номером — добавляем второй рядом
+            var links = document.querySelectorAll('a[href*="9371008097"]');
+            for (var i = 0; i < links.length; i++) {
+                var a = links[i];
+                if (a.getAttribute(MARK)) continue;
+                a.setAttribute(MARK, '1');
+
+                var sep = document.createTextNode(' · ');
+                var b = document.createElement('a');
+                b.href = SECOND_HREF;
+                b.textContent = SECOND_TEXT;
+                b.setAttribute('style',
+                    'color:inherit;font-weight:inherit;text-decoration:inherit;');
+
+                a.parentNode.insertBefore(sep, a.nextSibling);
+                a.parentNode.insertBefore(b, sep.nextSibling);
+            }
+
+            // 2) Если номер встречается просто текстом (без ссылки) — тоже добавим
+            var all = document.querySelectorAll('body *');
+            for (var j = 0; j < all.length; j++) {
+                var el = all[j];
+                if (el.getAttribute && el.getAttribute(MARK)) continue;
+                if (el.children && el.children.length > 0) continue; // только "листовые" элементы
+                if (!el.textContent || el.textContent.indexOf('100-80-97') === -1) continue;
+                el.setAttribute(MARK, '1');
+                el.innerHTML = el.innerHTML.replace(
+                    /(100-80-97)/,
+                    '$1 · <a href="' + SECOND_HREF + '" style="color:inherit;font-weight:inherit;">' + SECOND_TEXT + '</a>'
+                );
+            }
+        }
+
+        if (window.MutationObserver) {
+            new MutationObserver(decorate).observe(document.documentElement, {
+                childList: true,
+                subtree: true
+            });
+        }
+        document.addEventListener('DOMContentLoaded', decorate);
+        decorate();
+    })();
+    </script>
+
+    <!-- ========================================== -->
     <!-- СКРИПТ ДОБАВЛЕНИЯ ГАЛОЧКИ СОГЛАСИЯ -->
     <!-- ========================================== -->
     <script>
