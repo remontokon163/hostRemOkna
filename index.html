@@ -9,13 +9,29 @@
     <link rel="icon" href="/favicon.png"/>
     <title>РЕМ-ОКНА</title>
 
-    <!-- Стили для корректного отображения двух телефонов на мобильных -->
+    <!-- ================================================== -->
+    <!-- СТИЛИ: первый телефон крупнее, второй меньше       -->
+    <!-- ================================================== -->
     <style>
         .phones-wrap {
             display: inline-flex;
-            align-items: center;
+            align-items: baseline;
             gap: 6px;
             white-space: nowrap;
+            font-size: 1.2em; /* первый номер крупнее обычного текста на 20% */
+        }
+        /* первый номер — тот, что уже был на сайте (ссылка или текст) */
+        .phones-wrap > a:first-child,
+        .phones-wrap > *:first-child {
+            font-size: inherit;
+        }
+        /* второй номер — меньше первого */
+        .phones-wrap a.phone-secondary {
+            font-size: 0.75em;
+            opacity: 0.9;
+        }
+        .phones-separator {
+            opacity: 0.6;
         }
         @media (max-width: 992px) {
             .phones-wrap {
@@ -23,6 +39,7 @@
                 gap: 2px;
                 white-space: normal;
                 line-height: 1.3;
+                align-items: center;
             }
             .phones-wrap .phones-separator {
                 display: none;
@@ -60,7 +77,8 @@
     <div id="app"></div>
 
     <!-- ========================================== -->
-    <!-- СКРИПТ: ВТОРОЙ ТЕЛЕФОН РЯДОМ С ПЕРВЫМ -->
+    <!-- СКРИПТ: ВТОРОЙ ТЕЛЕФОН РЯДОМ С ПЕРВЫМ      -->
+    <!-- Первый — крупный, второй — мельче          -->
     <!-- ========================================== -->
     <script>
     (function () {
@@ -84,8 +102,9 @@
             var second = document.createElement('a');
             second.href = SECOND_HREF;
             second.textContent = SECOND_TEXT;
-            // наследуем внешний вид первого номера
-            second.setAttribute('style', 'color:inherit;font-weight:inherit;text-decoration:inherit;font-size:inherit;');
+            second.className = 'phone-secondary';
+            // наследуем цвет и жирность первого номера, размер — свой (меньше)
+            second.setAttribute('style', 'color:inherit;font-weight:inherit;text-decoration:inherit;');
 
             // вставляем обёртку на место первого номера и переносим его внутрь
             firstLink.parentNode.insertBefore(wrap, firstLink);
@@ -112,7 +131,7 @@
                         parent.innerHTML = parent.innerHTML.replace(
                             /(100-80-97)/,
                             '<span class="phones-wrap">$1<span class="phones-separator"> · </span>' +
-                            '<a href="' + SECOND_HREF + '" style="color:inherit;font-weight:inherit;font-size:inherit;">' + SECOND_TEXT + '</a></span>'
+                            '<a href="' + SECOND_HREF + '" class="phone-secondary" style="color:inherit;font-weight:inherit;">' + SECOND_TEXT + '</a></span>'
                         );
                     }
                 }
@@ -131,7 +150,7 @@
     </script>
 
     <!-- ========================================== -->
-    <!-- СКРИПТ ДОБАВЛЕНИЯ ГАЛОЧКИ СОГЛАСИЯ -->
+    <!-- СКРИПТ ДОБАВЛЕНИЯ ГАЛОЧКИ СОГЛАСИЯ         -->
     <!-- ========================================== -->
     <script>
     (function () {
